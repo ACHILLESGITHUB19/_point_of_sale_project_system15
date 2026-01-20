@@ -1,0 +1,286 @@
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: white;
+            font-size: 14px;
+            color: black;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #4e8a6a;
+            padding: 0 15px;
+            height: 50px;
+            border-radius: 0;
+            border: 1px solid black;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            width: 100%;
+        }
+
+        .logo-img {
+            width: 35px;
+            height: 35px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 1px solid black;
+            background-color: white;
+        }
+
+        .brandname {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brandname h2 {
+            font-size: 16px;
+            color: black;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .navbar .logout-container button {
+            padding: 6px 12px;
+            background-color: white;
+            color: black;
+            border: 1px solid black;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #4e8a6a;
+            border: 1px solid black;
+            border-radius: 0;
+            padding: 12px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            left: 0;
+            top: 50px;
+            bottom: 0;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            margin-top: 50px;
+            padding: 20px;
+            width: calc(100% - 250px);
+        }
+
+        .search-section {
+            margin-bottom: 15px;
+        }
+
+        .search-section .search {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid black;
+            border-radius: 3px;
+            background-color: white;
+            color: black;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .search-section .search::placeholder {
+            color: #666;
+        }
+
+        .dashboard-menu {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-menu li {
+            margin-bottom: 6px;
+        }
+
+        .dashboard-menu a {
+            display: block;
+            padding: 10px;
+            background-color: white;
+            border-radius: 3px;
+            color: black;
+            text-decoration: none;
+            font-size: 13px;
+            border: 1px solid black;
+        }
+
+        .dashboard-menu a.active {
+            background-color: #f0f0f0;
+        }
+
+        .sidebar-footer {
+            background-color: white;
+            margin-top: 20px;
+            padding: 8px;
+            border: 1px solid black;
+            text-align: center;
+            font-size: 10px;
+            color: black;
+        }
+
+        /* Settings page styles */
+        .settings-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: black;
+        }
+
+        .settings-box {
+            background: white;
+            border: 1px solid black;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .box-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: black;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+        }
+
+        .setting-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .setting-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: black;
+        }
+
+        .setting-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            color: black;
+        }
+
+        .setting-select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            color: black;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            background: white;
+            color: black;
+            border: 1px solid black;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .btn:hover {
+            background: #f0f0f0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #4e8a6a;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .small-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .status-online {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: red;
+            font-weight: bold;
+        }

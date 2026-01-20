@@ -1,0 +1,937 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: white;
+    font-size: 14px;
+    color: black;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* DASHBOARD CONTAINER */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #4e8a6a;
+    padding: 0 15px;
+    height: 50px;
+    border-radius: 0;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+}
+
+.logo-img {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid black;
+    background-image: url("logo.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.brandname {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brandname h2 {
+    font-size: 16px;
+    color: black;
+    font-weight: 600;
+    margin: 0;
+}
+
+.navbar .logout-container button {
+    padding: 6px 12px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* MAIN LAYOUT */
+.sidebar {
+    width: 250px;
+    background-color: #4e8a6a;
+    border: 1px solid white;
+    border-radius: 0;
+    padding: 12px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 50px;
+    bottom: 0;
+
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px;
+    margin-top: 50px;
+}
+
+/* SEARCH SECTION */
+.search-section {
+    margin-bottom: 15px;
+}
+
+.search-section .search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.search-section .search::placeholder {
+    color: #666;
+}
+
+.sidebar h2 {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+    color: black;
+}
+
+/* DASHBOARD MENU */
+.dashboard-menu {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.dashboard-menu li {
+    margin-bottom: 6px;
+}
+
+.dashboard-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 3px;
+    color: black;
+    text-decoration: none;
+    font-size: 13px;
+    border: 1px solid black;
+}
+
+.dashboard-menu a.active {
+    background-color: #f0f0f0;
+}
+
+/* SIDEBAR FOOTER */
+.sidebar-footer {
+    margin-top: 110px;
+    padding-top: 8px;
+    border: #000000 1px solid;
+    text-align: center;
+    font-size: 10px;
+    color: #4e8a6a solid;
+    padding: 30px;
+    background-color: white;
+}
+
+/* MAIN CONTENT - STATS SECTION */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: #4e8a6a;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100px;
+}
+
+.stat-card h3 {
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: white;
+    text-transform: uppercase;
+}
+
+.stat-card p {
+    font-size: 20px;
+    font-weight: 600;
+    color: white;
+}
+
+.revenue-card .stat-info {
+    text-align: left;
+}
+
+.revenue-amount {
+    font-size: 24px;
+    font-weight: 600;
+    color: white;
+    margin: 8px 0;
+}
+
+.revenue-change {
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+/* SALES OVERVIEW CHART */
+.charts-container {
+    margin-bottom: 20px;
+}
+
+.chart-card {
+    background-color: #4e8a6a;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.chart-header h2 {
+    font-size: 16px;
+    color: white;
+    margin: 0;
+}
+
+.chart-info-right {
+    text-align: right;
+}
+
+.chart-info-right .total-revenue {
+    font-size: 14px;
+    color: black;
+    margin: 0;
+}
+
+.chart-info-right .revenue-change-small {
+    font-size: 12px;
+    color: black;
+    margin: 2px 0 0 0;
+}
+
+.chart-placeholder {
+    height: 200px;
+    background-color: white;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid black;
+}
+
+.mock-chart {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.chart-bars {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 80%;
+    padding: 0 10px;
+}
+
+.chart-bars .bar {
+    width: 30px;
+    background-color: black;
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    border: 1px solid black;
+}
+
+.chart-labels {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 10px 0;
+    font-size: 11px;
+    color: black;
+}
+
+.chart-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    border-top: 1px solid black;
+}
+
+.chart-footer p {
+    color: black;
+    font-size: 14px;
+    margin: 0;
+}
+
+.updated-time {
+    font-size: 12px;
+    color: #666;
+}
+
+/* DATA GRID */
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.data-card {
+    background-color: #4e8a6a;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+}
+
+.data-header h3 {
+    font-size: 14px;
+    color: white;
+    margin: 0;
+}
+
+.status-badge {
+    font-size: 11px;
+    color: black;
+    background-color: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid black;
+}
+
+.view-all {
+    font-size: 12px;
+    color: black;
+    text-decoration: none;
+    padding: 4px 8px;
+    border: 1px solid black;
+    border-radius: 3px;
+}
+
+/* DATA TABLES */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: black;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 8px;
+    font-size: 12px;
+    color: black;
+    border-bottom: 1px solid black;
+    background-color: #f0f0f0;
+}
+
+.data-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid black;
+    font-size: 13px;
+    color: black;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* SECTION STYLING */
+.section-content {
+    display: none;
+}
+
+.section-content.active-section {
+    display: block;
+}
+
+/* TABLE CONTAINER STYLES */
+.table-container {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+}
+
+.table-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: black;
+}
+
+/* LAYOUT FOR LOWER SECTIONS */
+.dashboard-lower {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* STATUS INDICATORS */
+.status {
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid black;
+}
+
+.status-sufficient {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+.status-low {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+.status-restock {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+.status-out {
+    background-color: #f0f0f0;
+    color: black;
+}
+
+/* BUTTON STYLES */
+.btn-primary,
+.btn-secondary,
+.btn-small,
+.btn-refresh {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    padding: 8px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* MODAL STYLES */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 4px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid black;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: black;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: black;
+}
+
+/* FORM STYLES */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: black;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 3px;
+    font-size: 14px;
+    color: black;
+    background-color: white;
+}
+
+.form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* ORDER HISTORY SPECIFIC STYLES */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid black;
+}
+
+.section-header h1 {
+    font-size: 20px;
+    color: black;
+    margin: 0;
+}
+
+.section-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid black;
+    border-radius: 3px;
+    padding: 5px 10px;
+    background-color: white;
+}
+
+.search-box i {
+    color: black;
+    margin-right: 5px;
+}
+
+.search-box input {
+    border: none;
+    outline: none;
+    background: transparent;
+    color: black;
+    font-size: 13px;
+}
+
+.filter-dropdown select,
+.date-filter input {
+    padding: 6px 10px;
+    border: 1px solid black;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    font-size: 13px;
+}
+
+/* ORDERS TABLE */
+.orders-container {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: black;
+}
+
+.orders-table th {
+    text-align: left;
+    padding: 12px 10px;
+    font-size: 12px;
+    color: black;
+    border-bottom: 1px solid black;
+    background-color: #f0f0f0;
+}
+
+.orders-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid black;
+    font-size: 13px;
+    color: black;
+}
+
+.orders-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* PAGINATION */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    padding: 8px 15px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.page-info {
+    font-size: 13px;
+    color: black;
+}
+
+/* NO ORDERS MESSAGE */
+.no-orders {
+    text-align: center;
+    padding: 40px 20px;
+    color: black;
+}
+
+.no-orders i {
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.no-orders h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.no-orders p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* PRODUCT ITEMS */
+.product-item {
+    background-color: white;
+    border-radius: 4px;
+    padding: 15px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: black;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 5px;
+}
+
+.product-category {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: black;
+    border: 1px solid black;
+}
+
+.product-stock {
+    font-size: 14px;
+    color: black;
+    margin-bottom: 10px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+/* MENU GRID */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* SETTINGS STYLES */
+.settings-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.settings-card {
+    background-color: white;
+    border-radius: 4px;
+    border: 1px solid black;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: black;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    color: black;
+}
+
+.users-table th {
+    background-color: #f0f0f0;
+    padding: 10px;
+    text-align: left;
+    font-weight: 600;
+    color: black;
+    border-bottom: 1px solid black;
+}
+
+.users-table td {
+    padding: 10px;
+    border-bottom: 1px solid black;
+    color: black;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+/* SIMPLE ADD PRODUCT BUTTON */
+.add-product-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    color: black;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid black;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+/* LOADING OVERLAY */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid black;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* TOAST CONTAINER */
+#toastContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        top: auto;
+        left: auto;
+        margin-bottom: 15px;
+        border: 1px solid black;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        margin-top: 0;
+    }
+    
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-lower {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .chart-info-right {
+        text-align: left;
+    }
+    
+    .chart-bars .bar {
+        width: 20px;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .section-actions {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .navbar {
+        flex-direction: column;
+        height: auto;
+        padding: 8px;
+        gap: 8px;
+        border: 1px solid black;
+    }
+    
+    .brandname {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .data-card {
+        padding: 10px;
+        border: 1px solid black;
+    }
+    
+    .data-table {
+        font-size: 11px;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 6px 4px;
+    }
+    
+    .orders-table {
+        display: block;
+        overflow-x: auto;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/staff.css">
+<title>Staff Dashboard</title>
+</head>
+<body>
+
+<nav class="header-navbar">
+  <div class="brandname">
+    <div class="logo">
+      <img src="/logo.png" alt="Logo" class="logo-img">
+    </div>
+    <h2>G'ray Countryside Cafe</h2>
+    
+    <div class="Contacts"><h6>Contact Number: 0997-4600154</h6></div>
+    <div class="Location"><h6>JD Building, Crossing, Norzagaray, Bulacan, Norzagaray, Philippines, 3013</h6></div>
+    </div>
+
+     <div class="logout-btn">
+    <a href="/logout"><button>Logout</button></a>
+  </div>
+</nav>
+
+<div class="staffdashboard">
+  <div class="dashboard">
+
+    <div class="sidebar">
+      <h2>Category</h2>
+      <br>
+
+      <button class="category-btn active" id="category1" data-category="all">All Products</button>
+      <br>
+      <button class="category-btn" id="category2" data-category="Rice">Rice Bowl Meals</button>
+      <br>
+      <button class="category-btn" id="category3" data-category="Hot Sizzlers">Hot Sizzlers</button>
+      <br>
+      <button class="category-btn" id="category4" data-category="Party Tray">Party Tray</button>
+      <br>
+      <button class="category-btn" id="category5" data-category="Drinks">Drinks</button>
+      <br>
+      <button class="category-btn" id="category6" data-category="Cafe">Coffee</button>
+      <br>
+      <button class="category-btn" id="category7" data-category="Milk Tea">Milk Tea</button>
+      <br>
+      <button class="category-btn" id="category8" data-category="Frappe">Frappe</button>
+      <br>
+      <button class="category-btn" id="category9" data-category="Snack & Appetizer">Snacks & Appetizer</button>
+      <br>
+      <button class="category-btn" id="category10" data-category="Budget Meals Served with Rice">Budget Meals Served with Rice</button>
+      <br>
+      <button class="category-btn" id="category11" data-category="Specialties">Specialties</button>
+
+      <footer>&copy; 2026 For School Purposes Only. All rights reserved.</footer>
+    </div>
+
+    <div class="center"> 
+      <input type="text" class="search" placeholder="Search Menu" onkeyup="searchFood(this.value)">
+      <div id="menuContainer" class="menu-grid">
+      </div>
+    </div>
+
+    <!-- CART -->
+<div class="product">
+  <h3>Products</h3>
+  <p>Payment Type: <span id="paymentMethodDisplay">None</span></p>
+  <p>Order Type: <span id="orderTypeDisplay">None</span></p>
+  <p>Change: ₱<span id="changeAmount">0.00</span></p>
+  <ul id="productlist"></ul>
+
+  <div class="totals">
+  <p>Subtotal: <span id="subtotal">0.00</span></p>
+  <p>VAT (12%): <span id="tax">0.00</span></p>
+  <h3>Total Amount: ₱<span id="totals">0.00</span></h3>
+  </div>
+  
+  <div class="payment-section">
+  <div class="order-type-row">
+    <button class="dineinandtakeout-btn" Onclick="setDineIn()">Dine In</button>
+    <button class="dineinandtakeout-btn" Onclick="setTakeout()">Take Out</button>
+  </div>
+
+  <div class="customer-info">
+    <div class="form-group">
+      <label for="tableNumber">Table Number</label>
+      <input type="number" id="tableNumber" min="1" max="50" placeholder="Enter table " class="form-control">
+    </div>
+  </div>
+</div>
+
+<br>
+
+<div class="payment-methods">
+  <h3>Payment Method</h3>
+  <br>
+  <button id="cash-btn" class="payment-method-btn" onclick="selectPaymentMethod('cash')">Cash</button>
+  <button id="gcash-btn" class="payment-method-btn" onclick="selectPaymentMethod('gcash')">Gcash</button>
+<div class="input-payment-section">
+  <h3>Input Payment</h3>
+  <input type="number" id="inputPayment" class="input-payment" placeholder="Enter payment amount" required>
+   <div id="changeSection"></div>
+  <br><br>
+ 
+  
+  </div>
+    </div>
+<button class="pay-btn" onclick="Payment()" id="payment-btn">Pay</button>
+</div>
+</div>
+
+<div id="receipt" style="display: none;">
+  <div style="text-align: center; margin-bottom: 15px;">
+    <h2>G'RAY COUNTRYSIDE CAFE</h2>
+    <p>Est. 2018</p>
+    <p>Contact: (XXX) XXX-XXXX</p>
+    <div class="separator"></div>
+  </div>
+  
+  <p style="text-align: center;"><strong>ORDER RECEIPT</strong></p>
+  <p id="receiptOrderType" style="text-align: center;">[Order Type]</p>
+  <p id="receiptDateTime" style="text-align: center;">[Date/Time]</p>
+  <div class="separator"></div>
+  
+  <table id="receiptTable">
+    <thead>
+      <tr>
+        <th style="display: none;">Item</th>
+        <th style="display: none;">Qty</th>
+        <th style="display: none;">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  
+  <div class="separator"></div>
+  
+  <div class="totals-section">
+    <p>
+      <span>Subtotal:</span>
+      <span>₱<span id="receiptSubtotal">0.00</span></span>
+    </p>
+    <p>
+      <span>Tax (10%):</span>
+      <span>₱<span id="receiptTax">0.00</span></span>
+    </p>
+    <h3>
+      <span>TOTAL:</span>
+      <span>₱<span id="receiptTotal">0.00</span></span>
+    </h3>
+  </div>
+  <div class="footer">
+  <div class="thank-you">
+    THANK YOU. PLEASE COME AGAIN.
+  </div>
+  <div class="receipt-info">
+    ${dateString.split('/')[2]}${dateString.split('/')[0]}${dateString.split('/')[1]}-${timeString}-00000<br>
+    This serves as a SALES INVOICE
+  </div>
+</div>
+</div>
+<script src="/script/staff.js"></script>
+</body>
+</html>

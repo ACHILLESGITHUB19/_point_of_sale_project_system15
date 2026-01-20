@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/menu.css">
+<title>Menu Management</title>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="brandname">
+      <div class="logo">
+        <img src="/logo.png" alt="Logo" class="logo-img">
+      </div>
+      <h2>Gray Countryside Cafe</h2>
+    </div>
+    <div class="logout-container">
+      <button onclick="handleLogout()" class="logout-btn">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="sidebar">
+      <div class="search-section">
+        <input type="text" class="search" id="menuSearch" placeholder="Search menu items..." onkeyup="debounceSearch(this.value)">
+      </div>
+
+      <ul class="dashboard-menu">
+        <li><a href="/admindashboard/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="/admindashboard/inventory"><i class="fas fa-boxes"></i> Inventory</a></li>
+        <li><a href="/admindashboard/salesandreports"><i class="fas fa-chart-line"></i> Sales Reports</a></li>
+        <li><a href="/admindashboard/orderhistory"><i class="fas fa-history"></i> Order History</a></li>
+        <li><a href="/admindashboard/addstaff"><i class="fas fa-user-plus"></i> Add Staff</a></li>
+        <li><a href="/admindashboard/menumanagement" class="active"><i class="fas fa-utensils"></i> Menu Management</a></li>
+        <li><a href="/admindashboard/infosettings"><i class="fas fa-cog"></i> Settings</a></li>
+      </ul>
+      <footer class="sidebar-footer">
+        <i class="fas fa-graduation-cap"></i> 2026 For School Purposes Only
+      </footer>
+    </div>
+
+    <div class="main-content">
+      <div id="menuSection" class="section-content active-section">
+        <div class="section-header">
+          <div class="header-left">
+            <h2><i class="fas fa-utensils"></i> Menu Management</h2>
+            <p class="section-subtitle">Manage your cafe's menu items, prices, and categories</p>
+          </div>
+          <div class="menu-controls">
+            <button class="btn-primary" onclick="showAddDishModal()">
+              <i class="fas fa-plus-circle"></i> Add New Item
+            </button>
+            <button class="btn-secondary" onclick="showPerformanceModal()">
+              <i class="fas fa-chart-bar"></i> View Performance
+            </button>
+            <button class="btn-export" onclick="exportMenu()">
+              <i class="fas fa-file-export"></i> Export Data
+            </button>
+          </div>
+        </div>
+        
+        <div class="menu-summary">
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <div class="summary-content">
+              <h3>Total Items</h3>
+              <p id="totalMenuItems" class="summary-count">0</p>
+              <span class="summary-change">+0 this month</span>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-fire"></i>
+            </div>
+            <div class="summary-content">
+              <h3>Top Sellers</h3>
+              <p id="topSellers" class="summary-count">0</p>
+              <span class="summary-change">Top: <span id="topItemName">-</span></span>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="summary-content">
+              <h3>Avg. Profit Margin</h3>
+              <p id="bestProfitMargin" class="summary-count">0%</p>
+              <span class="summary-change">Best: <span id="bestProfitItem">-</span></span>
+            </div>
+          </div>
+          <div class="summary-card warning">
+            <div class="summary-icon">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="summary-content">
+              <h3>Need Review</h3>
+              <p id="needReview" class="summary-count">0</p>
+              <span class="summary-change">Low sales items</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="menu-filters">
+          <div class="filter-group">
+            <label><i class="fas fa-filter"></i> Show:</label>
+            <select id="menuFilter" onchange="filterMenu()">
+              <option value="all">All Items</option>
+              <option value="active">Active Items</option>
+              <option value="slow">Slow Sellers</option>
+              <option value="new">New Items</option>
+              <option value="outofstock">Out of Stock</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label><i class="fas fa-tags"></i> Category:</label>
+            <select id="categoryFilter" onchange="filterMenu()">
+              <option value="all">All Categories</option>
+              <option value="meal">Rice Meals</option>
+              <option value="drinks">Drinks</option>
+              <option value="coffee">Coffee</option>
+              <option value="snacks">Snacks</option>
+              <option value="special">Specials</option>
+              <option value="dessert">Desserts</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label><i class="fas fa-sort"></i> Sort by:</label>
+            <select id="sortFilter" onchange="sortMenu()">
+              <option value="name">Name (A-Z)</option>
+              <option value="price-asc">Price (Low to High)</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="sales">Sales (High to Low)</option>
+              <option value="profit">Profit Margin</option>
+            </select>
+          </div>
+          <div class="filter-group search-group">
+            <i class="fas fa-search"></i>
+            <input type="text" id="menuSearchInput" placeholder="Search by name, description..." onkeyup="searchMenu(this.value)">
+            <button class="clear-search" onclick="clearSearch()" title="Clear search">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="menu-grid" id="menuGrid">
+          <div class="loading-placeholder">
+            <i class="fas fa-spinner fa-spin"></i> Loading menu items...
+          </div>
+        </div>
+        
+        <div class="pagination" id="pagination">
+          <button class="page-btn" onclick="changePage(-1)" disabled>
+            <i class="fas fa-chevron-left"></i> Previous
+          </button>
+          <span class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+          <button class="page-btn" onclick="changePage(1)" disabled>
+            Next <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="menu-modal" id="addDishModal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><i class="fas fa-plus-circle"></i> Add New Menu Item</h3>
+            <button class="close-modal" onclick="closeAddModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <form id="addDishForm" onsubmit="addNewMenuItem(event)">
+              <div class="form-group">
+                <label><i class="fas fa-tag"></i> Item Name *</label>
+                <input type="text" id="itemName" placeholder="e.g., Beef Steak Rice Meal" required>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fas fa-money-bill-wave"></i> Selling Price (₱) *</label>
+                  <input type="number" id="itemPrice" placeholder="189" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-calculator"></i> Cost (₱) *</label>
+                  <input type="number" id="itemCost" placeholder="95" min="0" step="0.01" required>
+                  <div class="profit-preview">
+                    Profit: ₱<span id="profitPreview">0</span> (<span id="marginPreview">0%</span>)
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label><i class="fas fa-tags"></i> Category *</label>
+                  <select id="itemCategory" required>
+                    <option value="">Select category</option>
+                    <option value="meal">Rice Meals</option>
+                    <option value="drinks">Drinks</option>
+                    <option value="coffee">Coffee</option>
+                    <option value="snacks">Snacks</option>
+                    <option value="special">Specials</option>
+                    <option value="dessert">Desserts</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-thermometer-half"></i> Status</label>
+                  <select id="itemStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="new">New Arrival</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label><i class="fas fa-file-alt"></i> Description</label>
+                <textarea id="itemDescription" placeholder="Describe the dish, ingredients, etc..." rows="3"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label><i class="fas fa-image"></i> Image URL (Optional)</label>
+                <input type="text" id="itemImage" placeholder="https://example.com/image.jpg">
+              </div>
+              
+              <div class="form-group">
+                <label>
+                  <input type="checkbox" id="itemFeatured">
+                  <i class="fas fa-star"></i> Mark as Featured Item
+                </label>
+              </div>
+              
+              <div class="form-actions">
+                <button type="button" class="btn-cancel" onclick="closeAddModal()">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="submit" class="btn-save">
+                  <i class="fas fa-save"></i> Add Menu Item
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-modal" id="editModal">
+        <div class="modal-content">
+        </div>
+      </div>
+
+      <div class="menu-modal" id="performanceModal">
+        <div class="modal-content wide-modal">
+          <div class="modal-header">
+            <h3><i class="fas fa-chart-bar"></i> Menu Performance Analytics</h3>
+            <button class="close-modal" onclick="closePerformanceModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div class="performance-tabs">
+              <button class="tab-btn active" onclick="switchPerformanceTab('sales')">Sales</button>
+              <button class="tab-btn" onclick="switchPerformanceTab('profit')">Profit</button>
+              <button class="tab-btn" onclick="switchPerformanceTab('popularity')">Popularity</button>
+            </div>
+            
+            <div class="performance-content">
+              <div id="salesTab" class="tab-content active">
+                <h4><i class="fas fa-chart-line"></i> Sales Performance</h4>
+                <div class="chart-container">
+                  <canvas id="salesChart"></canvas>
+                </div>
+                <div class="performance-stats">
+                  <div class="stat-item">
+                    <h5>Top Selling Item</h5>
+                    <p id="topSellerItem">Beef Steak Rice (120 sold)</p>
+                  </div>
+                  <div class="stat-item">
+                    <h5>Average Daily Sales</h5>
+                    <p id="avgDailySales">₱12,450</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="profitTab" class="tab-content">
+                <h4><i class="fas fa-money-bill-wave"></i> Profit Analysis</h4>
+                <div class="chart-container">
+                  <canvas id="profitChart"></canvas>
+                </div>
+                <div class="performance-stats">
+                  <div class="stat-item">
+                    <h5>Highest Profit Margin</h5>
+                    <p id="highestMarginItem">Iced Coffee (65% margin)</p>
+                  </div>
+                  <div class="stat-item">
+                    <h5>Average Margin</h5>
+                    <p id="avgMargin">42%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="popularityTab" class="tab-content">
+                <h4><i class="fas fa-fire"></i> Item Popularity</h4>
+                <div class="chart-container">
+                  <canvas id="popularityChart"></canvas>
+                </div>
+                <div class="performance-stats">
+                  <div class="stat-item">
+                    <h5>Most Popular Category</h5>
+                    <p id="popularCategory">Coffee</p>
+                  </div>
+                  <div class="stat-item">
+                    <h5>Items Needing Review</h5>
+                    <p id="reviewItems">5 items</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="recommendations">
+              <h4><i class="fas fa-lightbulb"></i> Recommendations</h4>
+              <ul id="recommendationsList">
+                <li>Consider promoting "Fish Fillet Meal" - low sales detected</li>
+                <li>"Coffee" category shows highest profit margins</li>
+                <li>Add more snack options based on customer demand</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="menu-modal" id="deleteModal">
+        <div class="modal-content small-modal">
+          <div class="modal-header">
+            <h3><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h3>
+            <button class="close-modal" onclick="closeDeleteModal()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteItemName">this item</strong>?</p>
+            <p class="warning-text">This action cannot be undone. All sales data for this item will be preserved.</p>
+            <div class="form-actions">
+              <button type="button" class="btn-cancel" onclick="closeDeleteModal()">
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              <button type="button" class="btn-delete" onclick="confirmDelete()">
+                <i class="fas fa-trash"></i> Delete Permanently
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script src="/script/menu.js"></script>
+</body>
+</html>

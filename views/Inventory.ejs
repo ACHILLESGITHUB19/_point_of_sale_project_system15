@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management</title>
+    <link rel="stylesheet" href="/inventory.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    <div id="toastContainer"></div>
+    
+    <div class="dashboard-container">
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <div class="brandname">
+                <div class="logo">
+                    <img src="/logo.png" alt="Logo" class="logo-img">
+                </div>
+                <h2>Gray Countryside Cafe</h2>
+            </div>
+            <div class="logout-container">
+                <button onclick="handleLogout()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Left Column: Dashboard Sidebar -->
+        <div class="sidebar">
+            <div class="search-section">
+                <input type="text" class="search" placeholder="Search" onkeyup="debounceSearch(this.value)">
+            </div>
+            
+            <ul class="dashboard-menu">
+                <li><a href="/admindashboard/dashboard" onclick="showSection('dashboard')" class="active">Dashboard</a></li>
+                <li><a href="/admindashboard/Inventory">Inventory</a></li>
+                <li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+                <li><a href="/admindashboard/orderhistory">Order History</a></li>
+                <li><a href="/admindashboard/addstaff">Add Staff</a></li>
+                <li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+                <li><a href="/admindashboard/infosettings">Settings</a></li>
+            </ul>
+            <footer class="sidebar-footer">
+                &copy; 2026 For School Purposes Only. All rights reserved.
+            </footer>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <header class="header">
+                <div class="logo-section">
+                    <h1>Inventory Management</h1>
+                </div>
+                <div class="header-controls">
+                    <div class="inventory-type">
+                        <button class="type-btn active" data-type="all">All Items</button>
+                        <button class="type-btn" data-type="raw">Raw Ingredients</button>
+                        <button class="type-btn" data-type="finished">Finished Products</button>
+                    </div>
+                    <div class="btn btn-secondary">
+                        Reports
+                    </div>
+                </div>
+            </header>
+
+            <div class="container">
+                <aside class="inventory-sidebar">
+                    <div class="nav-section">
+                        <div class="nav-title">Main Navigation</div>
+                        <ul class="nav-menu">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link active" data-section="dashboard">
+                                    <span class="nav-icon">Dashboard</span>
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="inventory">
+                                    <span class="nav-icon">Inventory</span>
+                                    Inventory
+                                </a>
+                                <div class="category-list">
+                                    <div class="category-item active" data-category="all">
+                                        All Items
+                                        <span class="category-count">0</span>
+                                    </div>
+                                    <div class="category-item" data-category="meat">
+                                        Meat & Poultry
+                                        <span class="category-count">0</span>
+                                    </div>
+                                    <div class="category-item" data-category="dairy">
+                                        Dairy
+                                        <span class="category-count">0</span>
+                                    </div>
+                                    <div class="category-item" data-category="produce">
+                                        Produce
+                                        <span class="category-count">0</span>
+                                    </div>
+                                    <div class="category-item" data-category="dry">
+                                        Dry Goods
+                                        <span class="category-count">0</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="restock">
+                                    <span class="nav-icon">Restock</span>
+                                    Restock Alerts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" data-section="suppliers">
+                                    <span class="nav-icon">Suppliers</span>
+                                    Suppliers
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-title">Quick Actions</div>
+                        <ul class="nav-menu">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" id="quickAdd">
+                                    <span class="nav-icon">Add</span>
+                                    Add New Item
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" id="quickRestock">
+                                    <span class="nav-icon">Restock</span>
+                                    Bulk Restock
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link" id="quickReport">
+                                    <span class="nav-icon">Report</span>
+                                    Generate Report
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <main class="inventory-content">
+                    <section class="section-content active-section" id="dashboard">
+                        <div class="content-header">
+                            <div class="content-title">
+                                <h2>Dashboard Overview</h2>
+                                <p>Real-time inventory status and key metrics</p>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary">
+                                    This Week
+                                </button>
+                                <button class="btn btn-primary" id="refreshDashboard">
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="stats-dashboard">
+                            <div class="stat-card">
+                                <div class="stat-icon">Total Items</div>
+                                <h3>Total Items</h3>
+                                <div class="stat-value" id="totalItems">0</div>
+                                <div class="stat-change">+0 this week</div>
+                            </div>
+                            <div class="stat-card warning">
+                                <div class="stat-icon">Low Stock</div>
+                                <h3>Low Stock Items</h3>
+                                <div class="stat-value" id="lowStock">0</div>
+                                <div class="stat-change negative">+0 this week</div>
+                            </div>
+                            <div class="stat-card critical">
+                                <div class="stat-icon">Out of Stock</div>
+                                <h3>Out of Stock</h3>
+                                <div class="stat-value" id="outOfStock">0</div>
+                                <div class="stat-change">-0 this week</div>
+                            </div>
+                            <div class="stat-card info">
+                                <div class="stat-icon">Inventory Value</div>
+                                <h3>Inventory Value</h3>
+                                <div class="stat-value">₱0</div>
+                                <div class="stat-change">+0% this week</div>
+                            </div>
+                        </div>
+
+                        <div class="content-header">
+                            <div class="content-title">
+                                <h2>Recent Inventory Updates</h2>
+                                <p>Latest changes and restocks</p>
+                            </div>
+                            <button class="btn btn-primary" id="viewAllItems">
+                                View All Items
+                            </button>
+                        </div>
+
+                        <div class="inventory-grid" id="dashboardGrid">
+                            <!-- Dashboard items will be loaded here -->
+                        </div>
+                    </section>
+
+                    <section class="section-content" id="inventory">
+                        <div class="content-header">
+                            <div class="content-title">
+                                <h2>Inventory Management</h2>
+                                <p>Manage all raw ingredients and finished products</p>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary">
+                                    Export List
+                                </button>
+                                <button class="btn btn-primary" id="addNewItem">
+                                    Add New Item
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="inventory-grid" id="inventoryGrid">
+                            <!-- Inventory items will be loaded here -->
+                        </div>
+                    </section>
+
+                    <section class="section-content" id="restock">
+                        <div class="content-header">
+                            <div class="content-title">
+                                <h2>Restock Alerts</h2>
+                                <p>Items that need immediate attention</p>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-secondary" id="markAllRestocked">
+                                    Mark All Restocked
+                                </button>
+                                <button class="btn btn-primary" id="bulkOrder">
+                                    Create Bulk Order
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="inventory-grid" id="restockGrid">
+                            <!-- Restock items will be loaded here -->
+                        </div>
+                    </section>
+
+                    <section class="section-content" id="suppliers">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">Suppliers</div>
+                            <h3>Suppliers Management</h3>
+                            <p>This feature is coming soon.</p>
+                            <button class="btn btn-secondary">Notify When Ready</button>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Item</h3>
+                <button class="close-btn" id="closeModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="itemForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="itemName">Item Name *</label>
+                            <input type="text" id="itemName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemType">Item Type *</label>
+                            <select id="itemType" class="form-control" required>
+                                <option value="">Select Type</option>
+                                <option value="raw">Raw Ingredient</option>
+                                <option value="finished">Finished Product</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemCategory">Category *</label>
+                            <select id="itemCategory" class="form-control" required>
+                                <option value="">Select Category</option>
+                                <option value="meat">Meat & Poultry</option>
+                                <option value="dairy">Dairy</option>
+                                <option value="produce">Produce</option>
+                                <option value="dry">Dry Goods</option>
+                                <option value="beverage">Beverages</option>
+                                <option value="packaging">Packaging</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="itemUnit">Unit *</label>
+                            <input type="text" id="itemUnit" class="form-control" placeholder="kg, liters, pcs" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="currentStock">Current Stock *</label>
+                            <input type="number" id="currentStock" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="parLevel">Par Level *</label>
+                            <input type="number" id="parLevel" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="costPrice">Cost Price (₱) *</label>
+                            <input type="number" id="costPrice" class="form-control" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="supplier">Supplier</label>
+                            <input type="text" id="supplier" class="form-control" placeholder="Supplier name">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="description">Description / Ingredients</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="Enter description or list ingredients..."></textarea>
+                    </div>
+                    <input type="hidden" id="itemId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveItemBtn">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="restockModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Restock Item</h3>
+                <button class="close-btn" id="closeRestockModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="restockForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Item Name</label>
+                            <input type="text" id="restockItemName" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Stock</label>
+                            <input type="text" id="restockCurrentStock" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="restockQuantity">Restock Quantity *</label>
+                            <input type="number" id="restockQuantity" class="form-control" min="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Unit</label>
+                            <input type="text" id="restockUnit" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="restockPrice">Unit Price (₱)</label>
+                            <input type="number" id="restockPrice" class="form-control" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Cost</label>
+                            <input type="text" id="restockTotalCost" class="form-control" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="restockNotes">Notes</label>
+                        <textarea id="restockNotes" class="form-control" rows="2" placeholder="Add any notes about this restock..."></textarea>
+                    </div>
+                    <input type="hidden" id="restockItemId">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelRestockBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmRestockBtn">Confirm Restock</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="close-btn" id="closeDeleteModal">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="font-size: 48px; color: #e53e3e; margin-bottom: 20px;">Delete</div>
+                    <h3>Delete Item</h3>
+                    <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
+                    <p>
+                        This action cannot be undone.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn" id="confirmDeleteBtn" style="background: #e53e3e; color: white;">Delete Item</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/script/inventory.js"></script>
+</body>
+</html>

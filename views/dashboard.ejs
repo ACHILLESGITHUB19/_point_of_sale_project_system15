@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/dashboard.css">
+<title>Admin Dashboard</title>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="navbar">
+<div class="brandname">
+<div class="logo">
+<img src="/logo.png" alt="Logo" class="logo-img">
+</div>
+<h2>Gray Countryside Cafe</h2>
+</div>
+<div class="logout-container">
+<button onclick="handleLogout()">Logout</button>
+</div>
+</nav>
+
+<!-- Dashboard Container -->
+<div class="dashboard-container">
+<!-- Left Column: Dashboard Sidebar -->
+<div class="sidebar">
+<div class="search-section">
+<input type="text" class="search" id="menuSearch" placeholder="Search menu items..." onkeyup="debounceSearch(this.value)">
+</div>
+
+<ul class="dashboard-menu">
+<li><a href="/admindashboard/dashboard" onclick="showSection('dashboard')" class="active">Dashboard</a></li>
+<li><a href="/admindashboard/Inventory">Inventory</a></li>
+<li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+<li><a href="/admindashboard/orderhistory">Order History</a></li>
+<li><a href="/admindashboard/addstaff">Add Staff</a></li>
+<li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+<li><a href="/admindashboard/infosettings">Settings</a></li>
+</ul>
+<footer class="sidebar-footer">
+&copy; 2026 For School Purposes Only. All rights reserved.
+</footer>
+</div>
+
+ <!-- Main Content Area -->
+    <div class="main-content">
+      
+      <!-- STATS SECTION -->
+      <section class="stats-container">
+        <div class="stat-card">
+          <h3>Total Orders</h3>
+          <p id="totalOrders">0</p>
+        </div>
+
+        <div class="stat-card revenue-card">
+          <div class="stat-info">
+            <h3>Total Revenue</h3>
+            <p class="revenue-amount">
+              <span id="totalRevenue" class="revenue-value">0.00</span>
+            </p>
+            <div class="revenue-change">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+          </div>
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Total Customers</h3>
+          <p id="totalCustomers">0</p>
+        </div>
+
+        <div class="stat-card">
+          <h3>Total Products</h3>
+          <p id="totalProducts">0</p>
+        </div>
+      </section>
+
+      <!-- SALES OVERVIEW -->
+      <div class="charts-container">
+        <div class="chart-card">
+          <div class="chart-header">
+            <h2>SALES OVERVIEW</h2>
+            <div class="chart-info-right">
+             
+            </div>
+          </div>
+          
+          <div class="chart-placeholder">
+            <div class="mock-chart">
+              <div class="chart-bars">
+                
+              </div>
+              <div class="chart-labels">
+                <span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chart-footer">
+            
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA GRID (Inventory Status & Today's Orders) -->
+      <div class="data-grid">
+        <!-- Inventory Status -->
+        <div class="data-card">
+          <div class="data-header">
+            <h3>Inventory Status</h3>
+            <span class="status-badge">Updated 3:00 PM</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Stock</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody">
+              <!-- Data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Today's Orders -->
+        <div class="data-card">
+          <div class="data-header">
+            <h3>Today's Orders</h3>
+            <a href="#" class="view-all">View All</a>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Time</th>
+                <th>Customer</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <!-- Data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Top Selling Items -->
+        <div class="data-card">
+          <div class="data-header">
+            <h3>Top Selling Items</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Total Sales</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="topItemsTableBody">
+              <!-- Data will be loaded here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+<!-- DEBUG CONSOLE -->
+<div id="debugConsole" style="position: fixed; bottom: 0; left: 0; right: 0; background: #333; color: white; padding: 10px; font-family: monospace; font-size: 12px; z-index: 10000; max-height: 200px; overflow-y: auto;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+    <strong>Debug Console</strong>
+    <button onclick="toggleDebug()" style="background: #666; color: white; border: none; padding: 2px 8px; border-radius: 3px;">Toggle</button>
+  </div>
+  <div id="debugLog" style="max-height: 150px; overflow-y: auto;"></div>
+</div>
+
+<!-- SIMPLE REAL-TIME TEST SCRIPT -->
+<script>
+// Debug logging function
+function debugLog(message, type = 'info') {
+  const log = document.getElementById('debugLog');
+  if (!log) return;
+  
+  const timestamp = new Date().toLocaleTimeString();
+  const color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#4CAF50' : '#2196F3';
+  const entry = document.createElement('div');
+  entry.innerHTML = `<span style="color: #aaa">[${timestamp}]</span> <span style="color: ${color}">${message}</span>`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+  console.log(`[DEBUG] ${message}`);
+}
+
+// Toggle debug console
+function toggleDebug() {
+  const console = document.getElementById('debugConsole');
+  if (console.style.display === 'none') {
+    console.style.display = 'block';
+  } else {
+    console.style.display = 'none';
+  }
+}
+
+// Simple real-time test
+async function testRealTime() {
+  debugLog('🔄 Starting real-time test...');
+  
+  try {
+    // First check if we're logged in
+    const token = document.cookie.includes('token=');
+    debugLog(`🔐 Token present: ${token ? 'Yes' : 'No'}`);
+    
+    // Try to connect to SSE endpoint
+    debugLog('📡 Connecting to /api/admin/events...');
+    
+    const eventSource = new EventSource('/api/admin/events');
+    
+    eventSource.onopen = () => {
+      debugLog('✅ Connected to real-time server', 'success');
+    };
+    
+    eventSource.onmessage = (event) => {
+      debugLog(`📥 Received: ${event.data}`);
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'new_order') {
+          debugLog(`🆕 New order: ${data.data.orderNumber} - ₱${data.data.total}`, 'success');
+          // Update the UI
+          updateDashboardWithNewOrder(data.data);
+        }
+      } catch (e) {
+        debugLog(`❌ Error parsing event: ${e.message}`, 'error');
+      }
+    };
+    
+    eventSource.onerror = (error) => {
+      debugLog(`❌ SSE Error: ${error}`, 'error');
+      eventSource.close();
+      
+      // Try to reconnect after 3 seconds
+      setTimeout(() => {
+        debugLog('🔄 Reconnecting...');
+        testRealTime();
+      }, 3000);
+    };
+    
+    // Store for cleanup
+    window._eventSource = eventSource;
+    
+  } catch (error) {
+    debugLog(`❌ Setup failed: ${error.message}`, 'error');
+  }
+}
+
+// Update dashboard with new order
+function updateDashboardWithNewOrder(order) {
+  debugLog(`📊 Updating dashboard with order ${order.orderNumber}`);
+  
+  // Update Today's Orders table
+  const tableBody = document.getElementById('ordersTableBody');
+  if (tableBody) {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>${order.orderNumber}</td>
+      <td>${order.timestamp || new Date().toLocaleTimeString()}</td>
+      <td>Walk-in</td>
+      <td>₱${order.total.toFixed(2)}</td>
+    `;
+    
+    // Add at the top
+    if (tableBody.firstChild) {
+      tableBody.insertBefore(newRow, tableBody.firstChild);
+    } else {
+      tableBody.appendChild(newRow);
+    }
+    
+    // Show notification
+    showNotification(order);
+  }
+  
+  // Update stats
+  updateStats();
+}
+
+// Show notification
+function showNotification(order) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    border-left: 4px solid #4CAF50;
+    border-radius: 8px;
+    padding: 15px;
+    width: 300px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 9999;
+    animation: slideIn 0.3s ease-out;
+    font-family: Arial, sans-serif;
+  `;
+  
+  notification.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <strong style="color: #333;">🆕 New Order!</strong>
+      <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #999;">×</button>
+    </div>
+    <div style="font-size: 14px;">
+      <p style="margin: 5px 0;"><strong>Order #:</strong> ${order.orderNumber}</p>
+      <p style="margin: 5px 0;"><strong>Total:</strong> ₱${order.total.toFixed(2)}</p>
+      <p style="margin: 5px 0;"><strong>Type:</strong> ${order.type || 'Dine In'}</p>
+      <p style="margin: 5px 0;"><small>${order.timestamp || new Date().toLocaleTimeString()}</small></p>
+    </div>
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Auto-remove after 8 seconds
+  setTimeout(() => {
+    if (notification.parentElement) {
+      notification.remove();
+    }
+  }, 8000);
+  
+  // Add animation style if not present
+  if (!document.getElementById('slideInStyle')) {
+    const style = document.createElement('style');
+    style.id = 'slideInStyle';
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Update stats
+async function updateStats() {
+  try {
+    debugLog('📊 Fetching updated stats...');
+    const response = await fetch('/api/stats');
+    const stats = await response.json();
+    
+    // Update the stats display
+    const totalOrdersEl = document.getElementById('totalOrders');
+    const totalRevenueEl = document.getElementById('totalRevenue');
+    
+    if (totalOrdersEl) totalOrdersEl.textContent = stats.totalOrders || 0;
+    if (totalRevenueEl) totalRevenueEl.textContent = stats.totalRevenue ? stats.totalRevenue.toFixed(2) : '0.00';
+    
+    debugLog(`📊 Stats updated: ${stats.totalOrders} orders, ₱${stats.totalRevenue}`, 'success');
+  } catch (error) {
+    debugLog(`❌ Failed to update stats: ${error.message}`, 'error');
+  }
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  debugLog('📄 Page loaded');
+  
+  // Start real-time updates after 2 seconds
+  setTimeout(() => {
+    debugLog('🚀 Initializing real-time updates...');
+    testRealTime();
+    
+    // Also update stats immediately
+    updateStats();
+    
+    // Refresh stats every 30 seconds
+    setInterval(updateStats, 30000);
+  }, 2000);
+  
+  // Test the SSE endpoint
+  debugLog('🔍 Testing SSE endpoint...');
+  fetch('/api/admin/events')
+    .then(response => {
+      debugLog(`SSE Endpoint Status: ${response.status} ${response.statusText}`);
+      if (response.status === 200) {
+        debugLog('✅ SSE endpoint is accessible', 'success');
+      } else {
+        debugLog(`❌ SSE endpoint returned ${response.status}`, 'error');
+      }
+    })
+    .catch(error => {
+      debugLog(`❌ Cannot reach SSE endpoint: ${error.message}`, 'error');
+    });
+});
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  if (window._eventSource) {
+    window._eventSource.close();
+    debugLog('🔌 Cleaned up EventSource connection');
+  }
+});
+</script>
+
+<!-- Load your existing admin.js LAST so it can override if needed -->
+<script src="/script/admin.js"></script>

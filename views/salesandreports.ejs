@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/sales.css">
+<title>Admin Dashboard</title>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="brandname">
+        <div class="logo">
+          <img src="/logo.png" alt="Logo" class="logo-img">
+        </div>
+        <h2>Gray Countryside Cafe</h2>
+      </div>
+      <div class="logout-container">
+        <button onclick="handleLogout()">Logout</button>
+      </div>
+    </nav>
+
+  <div class="dashboard-container">
+    
+    <!-- Left Column: Dashboard Sidebar -->
+    <div class="sidebar">
+      <div class="search-section">
+        <input type="text" class="search" id="menuSearch" placeholder="Search menu items..." onkeyup="debounceSearch(this.value)">
+      </div>
+
+      <ul class="dashboard-menu">
+        <li><a href="/admindashboard/dashboard" onclick="showSection('dashboard')" class="active"></i> Dashboard</a></li>
+        <li><a href="/admindashboard/Inventory">Inventory</a></li>
+        <li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+        <li><a href="/admindashboard/orderhistory">Order History</a></li>
+        <li><a href="/admindashboard/addstaff">Add Staff</a></li>
+        <li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+        <li><a href="/admindashboard/infosettings">Settings</a></li>
+      </ul>
+      <footer class="sidebar-footer">
+        &copy; 2026 For School Purposes Only. All rights reserved.
+      </footer>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- SALES REPORTS SECTION -->
+      <div class="reports-container">
+        
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+          <div class="summary-card">
+            <h3>Total Sales Today</h3>
+            <p class="amount">₱0.00</p>
+          </div>
+          <div class="summary-card">
+            <h3>Transactions</h3>
+            <p class="amount">0</p>
+         
+          </div>
+          <div class="summary-card">
+            <h3>Average Order</h3>
+            <p class="amount">₱0.00</p>
+           </div>
+          <div class="summary-card">
+            <h3>Top Selling Item</h3>
+            <p class="amount">--</p>
+            </div>
+        </div>
+
+        <!-- Sales by Category -->
+        <div class="report-card">
+          <div class="report-header">
+            <h3>Sales by Category</h3>
+            <select class="period-select">
+              <option>Today</option>
+              <option>This Week</option>
+              <option>This Month</option>
+            </select>
+          </div>
+          <div class="category-list">
+           
+           
+        </div>
+
+        <!-- Product Performance -->
+        <div class="report-card">
+          <div class="report-header">
+            <h3>Top Selling Products</h3>
+            <select class="period-select">
+              <option>Today</option>
+              <option>This Week</option>
+              <option>This Month</option>
+            </select>
+          </div>
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="3" class="no-data">No sales data available</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Payment Methods -->
+        <div class="report-card">
+          <div class="report-header">
+            <h3>Payment Methods</h3>
+          </div>
+          <div class="payment-methods">
+            <div class="payment-item">
+              <span class="payment-type">Cash</span>
+              <span class="payment-amount">₱0.00 (0%)</span>
+            </div>
+            <div class="payment-item">
+              <span class="payment-type">GCash</span>
+              <span class="payment-amount">₱0.00 (0%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Peak Hours -->
+        <div class="report-card">
+          <div class="report-header">
+            <h3>Peak Hours</h3>
+          </div>
+          <div class="peak-hours">
+            <div class="hour-item">
+              <span class="hour">--:-- --</span>
+              <div class="hour-bar-container">
+                <div class="hour-bar" style="width: 0%"></div>
+              </div>
+              <span class="hour-percent">0% busy</span>
+            </div>
+            <div class="no-data-message">
+              No peak hour data available
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Export & Actions -->
+        <div class="report-actions">
+          <button class="export-btn">
+            Export Report (PDF)
+          </button>
+          <button class="export-btn">
+            Export Data (Excel)
+          </button>
+          <button class="refresh-btn">
+            Refresh Data
+          </button>
+        </div>
+
+      </div>
+      <!-- End of SALES REPORTS SECTION -->
+    </div>
+
+    <!-- Day Sales Modal -->
+    <div class="day-sales-modal" id="daySalesModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modalDayTitle"></h3>
+          <button class="close-modal" onclick="closeModal()">×</button>
+        </div>
+        <div class="sales-details" id="salesDetails">
+          <!-- Sales details will be populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script src="/script/inventory.js"></script>
+</body>
+</html>

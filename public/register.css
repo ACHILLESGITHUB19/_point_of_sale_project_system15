@@ -1,0 +1,382 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: white;
+    font-size: 14px;
+    color: black;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* DASHBOARD CONTAINER */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #4e8a6a;
+    padding: 0 15px;
+    height: 50px;
+    border-radius: 0;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    width: 100%;
+}
+
+.logo-img {
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.brandname {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brandname h2 {
+    font-size: 16px;
+    color: black;
+    font-weight: 600;
+    margin: 0;
+}
+
+.navbar .logout-container button {
+    padding: 6px 12px;
+    background-color: white;
+    color: black;
+    border: 1px solid black;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+/* MAIN LAYOUT */
+.sidebar {
+    width: 250px;
+    background-color: #4e8a6a;
+    border: 1px solid white;
+    border-radius: 0;
+    padding: 12px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    top: 50px;
+    bottom: 0;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 250px;
+    margin-top: 50px;
+}
+
+/* SEARCH SECTION */
+.search-section {
+    margin-bottom: 15px;
+}
+
+.search-section .search {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid black;
+    border-radius: 3px;
+    background-color: white;
+    color: black;
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.search-section .search::placeholder {
+    color: #666;
+}
+
+.sidebar h2 {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+    color: black;
+}
+
+/* DASHBOARD MENU */
+.dashboard-menu {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.dashboard-menu li {
+    margin-bottom: 6px;
+}
+
+.dashboard-menu a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 3px;
+    color: black;
+    text-decoration: none;
+    font-size: 13px;
+    border: 1px solid black;
+}
+
+.dashboard-menu a.active {
+    background-color: #f0f0f0;
+}
+
+.sidebar-footer {
+    margin-top: 110px;
+    padding-top: 8px;
+    background-color: white;
+    border: #000000 1px solid;
+    text-align: center;
+    font-size: 10px;
+    color: 4e8a6a;
+    padding: 30px;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 30px;
+  background: #ffffff; /* Changed to white */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  border: 1px solid #000000; /* Changed to black */
+  overflow-y: auto;
+}
+
+.main-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Changed to light gray */
+  border-radius: 4px;
+  border: 1px solid #000000; /* Changed to black */
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: #cccccc; /* Changed to gray */
+  border-radius: 4px;
+  border: 1px solid #000000; /* Changed to black */
+}
+
+.section-content {
+  display: none;
+}
+
+.section-content.active-section {
+  display: block;
+}
+
+.simple-form-container {
+  width: 100%;
+  max-width: 400px;
+  background: #4e8a6a; /* Changed to white */
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid #000000; /* Changed to black */
+  margin: 0 auto; /* This will center it horizontally */
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.form-header h2 {
+  color: white; /* Changed to black */
+  margin: 0 0 5px 0;
+  font-size: 1.7rem;
+  border-bottom: 1px solid #000000; /* Changed to black */
+  padding-bottom: 10px;
+}
+
+.form-header p {
+  color: rgb(94, 89, 89); /* Changed to black */
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #000000; /* Changed to black */
+  font-weight: 600;
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #000000; /* Changed to black */
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s, box-shadow 0.3s;
+  background: #ffffff; /* Changed to white */
+  color: #000000; /* Changed to black */
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: #999999; /* Changed to gray */
+  box-shadow: 0 0 5px #999999; /* Changed to gray */
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 14px;
+  background: #e0e0e0; /* Changed to light gray */
+  color: #000000; /* Changed to black */
+  border: 1px solid #000000; /* Changed to black */
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #cccccc; /* Changed to gray */
+  transform: translateY(-2px);
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #000000; /* Changed to black */
+  color: #000000; /* Changed to black */
+  font-size: 13px;
+}
+
+.form-footer a {
+  color: #000000; /* Changed to black */
+  text-decoration: none;
+}
+
+.form-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .dashboard-menu {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+  }
+  
+  .dashboard-menu li {
+    margin-bottom: 0;
+  }
+  
+  .dashboard-menu a {
+    white-space: nowrap;
+    padding: 10px 15px;
+  }
+  
+  .simple-form-container {
+    padding: 25px;
+    margin: 20px;
+  }
+}
+
+/* Password wrapper - FIXED VERSION */
+.input-group {
+    position: relative; /* Add this to make it a positioning context */
+    margin-bottom: 20px;
+}
+
+.password-wrapper {
+    position: relative; /* Make this the containing block for absolute positioning */
+    display: block; /* Ensure it takes full width */
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding: 12px 35px 12px 12px; /* Right padding for toggle button */
+    border: 1px solid #000000;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border 0.3s, box-shadow 0.3s;
+    background: #ffffff;
+    color: #000000;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+.password-wrapper input:focus {
+    outline: none;
+    border-color: #999999;
+    box-shadow: 0 0 5px #999999;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 2;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toggle-password img {
+    width: 18px;
+    height: 18px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.toggle-password:hover img {
+    opacity: 1;
+}

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/historyorder.css">
+<title>Admin Dashboard</title>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="brandname">
+        <div class="logo">
+          <img src="/logo.png" alt="Logo" class="logo-img">
+        </div>
+        <h2>Gray Countryside Cafe</h2>
+      </div>
+      <div class="logout-container">
+        <button onclick="handleLogout()">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Left Column: Dashboard Sidebar -->
+    <div class="sidebar">
+      <div class="search-section">
+        <input type="text" class="search" id="menuSearch" placeholder="Search menu items..." onkeyup="debounceSearch(this.value)">
+      </div>
+
+      <ul class="dashboard-menu">
+        <li><a href="/admindashboard/dashboard" onclick="showSection('dashboard')" class="active"></i> Dashboard</a></li>
+        <li><a href="/admindashboard/Inventory">Inventory</a></li>
+        <li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+        <li><a href="/admindashboard/orderhistory">Order History</a></li>
+        <li><a href="/admindashboard/addstaff">Add Staff</a></li>
+        <li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+        <li><a href="/admindashboard/infosettings">Settings</a></li>
+      </ul>
+      <footer class="sidebar-footer">
+        &copy; 2026 For School Purposes Only. All rights reserved.
+      </footer>
+    </div>
+
+   <!-- Main Content Area -->
+<div class="main-content">
+  <!-- DASHBOARD SECTION (Default View) -->
+  <div id="dashboardSection" class="section-content active-section">
+    <!-- SALES OVERVIEW -->
+    <div class="charts-container">
+      <div class="chart-card" id="salesChart">
+        <div class="chart-header">
+          <h2>SALES OVERVIEW</h2>
+        </div>
+        
+        <div class="chart-placeholder">
+          <div class="mock-chart">
+            <div class="chart-labels">
+              <span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDER HISTORY SECTION -->
+  <div id="historySection" class="section-content">
+    <div class="section-header">
+      <h1><i class="fas fa-history"></i> Order History</h1>
+      <div class="section-actions">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="orderSearch" placeholder="Search orders..." onkeyup="searchOrders(this.value)">
+        </div>
+        <div class="filter-dropdown">
+          <select id="statusFilter" onchange="filterOrders()">
+            <option value="">All Status</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="preparing">Preparing</option>
+            <option value="served">Served</option>
+          </select>
+        </div>
+        <div class="date-filter">
+          <input type="date" id="dateFilter" onchange="filterByDate()">
+        </div>
+        <button class="btn-refresh" onclick="refreshOrders()">
+          <i class="fas fa-sync-alt"></i> Refresh
+        </button>
+      </div>
+    </div>
+
+    <div class="orders-container">
+      <!-- Orders will be displayed here -->
+      <div class="no-orders" id="noOrdersMessage">
+        <i class="fas fa-clipboard-list fa-3x"></i>
+        <h3>No Orders Found</h3>
+        <p>Order history will appear here once orders are placed.</p>
+      </div>
+
+      <table class="orders-table" id="ordersTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total Amount</th>
+            <th>Status</th>
+            <th>Date & Time</th>
+            <th>Payment Method</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTableBody">
+          <!-- Orders will be dynamically inserted here -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" id="pagination" style="display: none;">
+      <button class="pagination-btn" onclick="changePage(-1)">
+        <i class="fas fa-chevron-left"></i> Previous
+      </button>
+      <span class="page-info">Page <span id="currentPage">1</span> of <span id="totalPages">1</span></span>
+      <button class="pagination-btn" onclick="changePage(1)">
+        Next <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+
+
+          <!-- Top Selling Items -->
+          <div class="chart-card">
+            <div class="table-header">
+              <h3>Top Selling Items</h3>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LOWER DASHBOARD SECTION -->
+        <div class="dashboard-lower">
+          <!-- Inventory Status -->
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Inventory Status</h3>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Stock</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Today's Orders -->
+          <div class="table-container">
+            <div class="table-header">
+              <h3>Today's Orders</h3>
+              <a href="#" style="text-decoration: none; color: #007bff; font-size: 14px;">View All Orders</a>
+            </div>
+            <table>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+<script src="/script/admin.js"></script>
+  

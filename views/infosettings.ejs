@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafe Settings</title>
+    <link rel="stylesheet" href="/settings.css">
+
+</head>
+<body>
+    <div class="dashboard-container">
+        <nav class="navbar">
+            <div class="brandname">
+                <div class="logo-img"></div>
+                <h2>Gray Countryside Cafe</h2>
+            </div>
+            <div class="logout-container">
+                <button>Log Out</button>
+            </div>
+        </nav>
+
+        <aside class="sidebar">
+            <div class="search-section">
+                <input type="text" class="search" placeholder="Search...">
+            </div>
+
+            <ul class="dashboard-menu">
+                <li><a href="/admindashboard/dashboard">Dashboard</a></li>
+                <li><a href="/admindashboard/inventory">Inventory</a></li>
+                <li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+                <li><a href="/admindashboard/orderhistory">Order History</a></li>
+                <li><a href="/admindashboard/addstaff">Add Staff</a></li>
+                <li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+                <li><a href="/admindashboard/infosettings">Settings</a></li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                © 2026 For School Purposes Only
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="settings-title">Cafe Settings</h1>
+            
+            <!-- Menu & Pricing Settings -->
+            <div class="settings-box">
+                <h2 class="box-title">Menu & Pricing</h2>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Coffee Base Price</label>
+                    <input type="number" class="setting-input" value="3.50" step="0.10">
+                    <div class="small-text">Regular coffee price</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Snack Base Price</label>
+                    <input type="number" class="setting-input" value="2.50" step="0.10">
+                    <div class="small-text">Basic snack items</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Extra Shot Price</label>
+                    <input type="number" class="setting-input" value="0.75" step="0.10">
+                    <div class="small-text">For espresso drinks</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Soy Milk Charge</label>
+                    <input type="number" class="setting-input" value="0.50" step="0.10">
+                    <div class="small-text">Extra charge for soy milk</div>
+                </div>
+                
+                <button class="btn">Save Menu Prices</button>
+            </div>
+
+            <!-- POS Configuration -->
+            <div class="settings-box">
+                <h2 class="box-title">POS Setup</h2>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Dine-In Option</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Takeaway Option</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Default Tax Rate (%)</label>
+                    <input type="number" class="setting-input" value="8.5" step="0.1">
+                </div>
+                
+                <button class="btn">Save POS Settings</button>
+            </div>
+
+            <!-- Staff Settings -->
+            <div class="settings-box">
+                <h2 class="box-title">Staff Settings</h2>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Staff Login Required</label>
+                    <select class="setting-select">
+                        <option value="yes">Yes - All staff must login</option>
+                        <option value="no">No - Open access</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Shift Start Time</label>
+                    <input type="time" class="setting-input" value="07:00">
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Shift End Time</label>
+                    <input type="time" class="setting-input" value="18:00">
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Break Duration (minutes)</label>
+                    <input type="number" class="setting-input" value="30" min="0" max="60">
+                    <div class="small-text">Break time for each shift</div>
+                </div>
+                
+                <button class="btn">Save Staff Settings</button>
+            </div>
+
+            <!-- Inventory Settings -->
+            <div class="settings-box">
+                <h2 class="box-title">Inventory Settings</h2>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Low Stock Alerts</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="small-text">Get alerts when stock is low</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Low Stock Threshold</label>
+                    <input type="number" class="setting-input" value="10" min="1">
+                    <div class="small-text">Alert when items reach this count</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">FIFO Method</label>
+                    <select class="setting-select">
+                        <option value="yes">Yes - Use First In First Out</option>
+                        <option value="no">No - Manual stock management</option>
+                    </select>
+                    <div class="small-text">Automatically use oldest stock first</div>
+                </div>
+                
+                <button class="btn">Save Inventory Settings</button>
+            </div>
+
+            <!-- Customer Settings -->
+            <div class="settings-box">
+                <h2 class="box-title">Customer Settings</h2>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Loyalty Cards</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="small-text">Digital stamp cards for customers</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Birthday Rewards</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="small-text">Free drink on customer birthday</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="toggle-label">
+                        <label class="setting-label">Gift Cards</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="small-text">Sell gift cards to customers</div>
+                </div>
+                
+                <button class="btn">Save Customer Settings</button>
+            </div>
+
+            <!-- Equipment Settings -->
+            <div class="settings-box">
+                <h2 class="box-title">Equipment Status</h2>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Coffee Machine</label>
+                    <div class="status-online">● Online</div>
+                    <div class="small-text">Last cleaned: Today 08:00 AM</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">POS Printer</label>
+                    <div class="status-online">● Online</div>
+                    <div class="small-text">Paper level: Good</div>
+                </div>
+                
+                <div class="setting-item">
+                    <label class="setting-label">Card Machine</label>
+                    <div class="status-online">● Online</div>
+                    <div class="small-text">Connected to network</div>
+                </div>
+                
+                <button class="btn">Check Equipment</button>
+            </div>
+
+        </main>
+    </div>
+</body>
+</html>

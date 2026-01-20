@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="/admin.css">
+<title>Admin Dashboard</title>
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+  </div>
+  <div id="toastContainer"></div>
+  <div class="dashboard-container">
+    
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="brandname">
+        <div class="logo">
+          <img src="/logo.png" alt="Logo" class="logo-img">
+        </div>
+        <h2>Gray Countryside Cafe</h2>
+      </div>
+      <div class="logout-container">
+        <button onclick="handleLogout()">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Left Column: Dashboard Sidebar -->
+    <div class="sidebar">
+      <div class="search-section">
+        <input type="text" class="search" placeholder="Search" onkeyup="debounceSearch(this.value)">
+      </div>
+      
+      <h2>Dashboard</h2>
+      <ul class="dashboard-menu">
+       <li><a href="/admindashboard/dashboard" onclick="showSection('dashboard')" class="active"></i> Dashboard</a></li>
+        <li><a href="/admindashboard/Inventory">Inventory</a></li>
+        <li><a href="/admindashboard/salesandreports">Sales Reports</a></li>
+        <li><a href="/admindashboard/orderhistory">Order History</a></li>
+        <li><a href="/admindashboard/addstaff">Add Staff</a></li>
+        <li><a href="/admindashboard/menumanagement">Menu Management</a></li>
+        <li><a href="/admindashboard/infosettings">Settings</a></li>
+      </ul>
+      <footer class="sidebar-footer">
+        &copy; 2026 For School Purposes Only. All rights reserved.
+      </footer>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <!-- DASHBOARD SECTION (Default View) -->
+      <div id="dashboardSection" class="section-content active-section">
+        <!-- STATS SECTION -->
+        <section class="stats-container">
+          <div class="stat-card" id="totalOrdersCard" onclick="showSection('history')">
+            <h3>Total Orders</h3>
+            <p id="totalOrders">0</p>
+          </div>
+
+          <div class="stat-card revenue-card" id="revenueCard" onclick="showSection('sales')">
+            <div class="stat-info">
+              <h3>Total Revenue</h3>
+              <p class="revenue-amount">
+                <span id="totalRevenue" class="revenue-value">0.00</span>
+              </p>
+              <div class="revenue-change">
+                <i class="fas fa-arrow-up"></i>
+                <span>+₱1,056.00 Since Yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card" id="customersCard">
+            <h3>Customers</h3>
+            <p id="totalCustomers">0</p>
+          </div>
+
+          <div class="stat-card" id="productsCard" onclick="showSection('menu')">
+            <h3>Total Products</h3>
+            <p id="totalProducts">0</p>
+          </div>
+        </section>
+
+        <!-- SALES OVERVIEW -->
+        <div class="charts-container">
+          <div class="chart-card" id="salesChart">
+            <div class="chart-header">
+              <h2>SALES OVERVIEW</h2>
+              <div class="chart-info-right">
+                <p class="total-revenue"><strong>Total Revenue:</strong> ₱3,686.80</p>
+                <p class="revenue-change-small">+₱1,056.00 Since Yesterday</p>
+              </div>
+            </div>
+            
+            <div class="chart-placeholder">
+              <div class="mock-chart">
+                <div class="chart-bars">
+                  <div class="bar" style="height: 60%;" data-day="tue" data-amount="2000" onclick="showDaySales('tuesday')"></div>
+                  <div class="bar" style="height: 30%;" data-day="wed" data-amount="1000" onclick="showDaySales('wednesday')"></div>
+                  <div class="bar" style="height: 45%;" data-day="thu" data-amount="1500" onclick="showDaySales('thursday')"></div>
+                  <div class="bar" style="height: 75%;" data-day="fri" data-amount="2500" onclick="showDaySales('friday')"></div>
+                  <div class="bar" style="height: 90%;" data-day="sat" data-amount="3000" onclick="showDaySales('saturday')"></div>
+                  <div class="bar" style="height: 50%;" data-day="sun" data-amount="1700" onclick="showDaySales('sunday')"></div>
+                  <div class="bar" style="height: 40%;" data-day="mon" data-amount="1300" onclick="showDaySales('monday')"></div>
+                </div>
+                <div class="chart-labels">
+                  <span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span><span>Mon</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chart-footer">
+              <p><strong>Total Sales This Week:</strong> ₱18,460.30</p>
+              <p class="updated-time">Updated: 3:00 PM</p>
+            </div>
+          </div>
+        </div>
+
+<script src="/script/admin.js"></script>
+</body>
+</html>
