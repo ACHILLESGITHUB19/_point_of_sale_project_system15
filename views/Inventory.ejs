@@ -55,9 +55,7 @@
                 </div>
                 <div class="header-controls">
                     <div class="inventory-type">
-                        <button class="type-btn active" data-type="all">All Items</button>
-                        <button class="type-btn" data-type="raw">Raw Ingredients</button>
-                        <button class="type-btn" data-type="finished">Finished Products</button>
+                        <!-- This is the top nav bar -->
                     </div>
                     <div class="btn btn-secondary">
                         Reports
@@ -73,13 +71,11 @@
                             <li class="nav-item">
                                 <a href="#" class="nav-link active" data-section="dashboard">
                                     <span class="nav-icon">Dashboard</span>
-                                    Dashboard
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a href="#" class="nav-link" data-section="inventory">
                                     <span class="nav-icon">Inventory</span>
-                                    Inventory
                                 </a>
                                 <div class="category-list">
                                     <div class="category-item active" data-category="all">
@@ -107,37 +103,6 @@
                             <li class="nav-item">
                                 <a href="#" class="nav-link" data-section="restock">
                                     <span class="nav-icon">Restock</span>
-                                    Restock Alerts
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link" data-section="suppliers">
-                                    <span class="nav-icon">Suppliers</span>
-                                    Suppliers
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="nav-section">
-                        <div class="nav-title">Quick Actions</div>
-                        <ul class="nav-menu">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link" id="quickAdd">
-                                    <span class="nav-icon">Add</span>
-                                    Add New Item
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link" id="quickRestock">
-                                    <span class="nav-icon">Restock</span>
-                                    Bulk Restock
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link" id="quickReport">
-                                    <span class="nav-icon">Report</span>
-                                    Generate Report
                                 </a>
                             </li>
                         </ul>
@@ -186,16 +151,6 @@
                                 <div class="stat-value">₱0</div>
                                 <div class="stat-change">+0% this week</div>
                             </div>
-                        </div>
-
-                        <div class="content-header">
-                            <div class="content-title">
-                                <h2>Recent Inventory Updates</h2>
-                                <p>Latest changes and restocks</p>
-                            </div>
-                            <button class="btn btn-primary" id="viewAllItems">
-                                View All Items
-                            </button>
                         </div>
 
                         <div class="inventory-grid" id="dashboardGrid">
@@ -259,73 +214,66 @@
     </div>
 
     <!-- Modals -->
-    <div class="modal" id="itemModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalTitle">Add New Item</h3>
-                <button class="close-btn" id="closeModal">×</button>
-            </div>
-            <div class="modal-body">
-                <form id="itemForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="itemName">Item Name *</label>
-                            <input type="text" id="itemName" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="itemType">Item Type *</label>
-                            <select id="itemType" class="form-control" required>
-                                <option value="">Select Type</option>
-                                <option value="raw">Raw Ingredient</option>
-                                <option value="finished">Finished Product</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="itemCategory">Category *</label>
-                            <select id="itemCategory" class="form-control" required>
-                                <option value="">Select Category</option>
-                                <option value="meat">Meat & Poultry</option>
-                                <option value="dairy">Dairy</option>
-                                <option value="produce">Produce</option>
-                                <option value="dry">Dry Goods</option>
-                                <option value="beverage">Beverages</option>
-                                <option value="packaging">Packaging</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="itemUnit">Unit *</label>
-                            <input type="text" id="itemUnit" class="form-control" placeholder="kg, liters, pcs" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="currentStock">Current Stock *</label>
-                            <input type="number" id="currentStock" class="form-control" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="parLevel">Par Level *</label>
-                            <input type="number" id="parLevel" class="form-control" min="1" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="costPrice">Cost Price (₱) *</label>
-                            <input type="number" id="costPrice" class="form-control" min="0" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="supplier">Supplier</label>
-                            <input type="text" id="supplier" class="form-control" placeholder="Supplier name">
-                        </div>
+   <div class="modal" id="itemModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modalTitle">Add New Item</h3>
+            <button class="close-btn" id="closeModal">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="itemForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="itemName">Item Name *</label>
+                        <input type="text" id="itemName" class="form-control" required>
                     </div>
-                    <div class="form-group full-width">
-                        <label for="description">Description / Ingredients</label>
-                        <textarea id="description" class="form-control" rows="3" placeholder="Enter description or list ingredients..."></textarea>
+                    <div class="form-group">
+                        <label for="itemType">Item Type *</label>
+                        <select id="itemType" class="form-control" required>
+                            <option value="">Select Type</option>
+                            <option value="raw">Raw Ingredient</option>
+                            <option value="finished">Finished Product</option>
+                        </select>
                     </div>
-                    <input type="hidden" id="itemId">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveItemBtn">Save Item</button>
-            </div>
+                    <div class="form-group">
+                        <label for="itemCategory">Category *</label>
+                        <select id="itemCategory" class="form-control" required>
+                            <option value="">Select Category</option>
+                            <option value="meat">Meat & Poultry</option>
+                            <option value="dairy">Dairy</option>
+                            <option value="produce">Produce</option>
+                            <option value="dry">Dry Goods</option>
+                            <option value="beverage">Beverages</option>
+                            <option value="packaging">Packaging</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="itemUnit">Unit *</label>
+                        <input type="number" id="itemUnit" class="form-control" min="1" step="1" value="1" required>
+                    </div>
+                    <!-- ADD THESE STOCK FIELDS -->
+                    <div class="form-group">
+                        <label for="currentStock">Current Stock *</label>
+                        <input type="number" id="currentStock" class="form-control" min="0" step="1" value="10" required>             
+                    </div>
+                    <div class="form-group">
+                        <label for="minStock">Minimum Stock *</label>
+                        <input type="number" id="minStock" class="form-control" min="0" step="1" value="10" required>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="description">Message</label>
+                    <textarea id="description" class="form-control" rows="3" placeholder="Enter description or list ingredients..."></textarea>
+                </div>
+                <input type="hidden" id="itemId">
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+            <button class="btn btn-primary" id="saveItemBtn">Save Item</button>
         </div>
     </div>
+</div>
 
     <div class="modal" id="restockModal">
         <div class="modal-content">

@@ -11,6 +11,7 @@ import Stats from "./models/Stats.js";
 import MenuItem from "./models/Menuitems.js";
 import Product from "./models/Product.js";
 import Order from "./models/Order.js";
+import InventoryItem from "./models/InventoryItem.js"; // Added import
 import categoryRoutes from "./routes/categoryroute.js";
 import productRoutes from "./routes/productroute.js";
 
@@ -28,6 +29,9 @@ const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Define low stock threshold
+const LOW_STOCK_THRESHOLD = 10;
 
 await connectDB();
 
@@ -124,6 +128,24 @@ const sendOrderNotification = (order) => {
   }, 500);
 };
 
+// Function to send low stock alerts
+const sendLowStockAlert = async (product) => {
+  const lowStockCount = await Product.countDocuments({
+    stock: { $lt: LOW_STOCK_THRESHOLD, $gte: 0 }
+  });
+
+  broadcastToAdmins({
+    type: 'low_stock_alert',
+    data: {
+      productId: product._id,
+      productName: product.name,
+      currentStock: product.stock,
+      lowStockCount: lowStockCount
+    },
+    message: `Low stock alert: ${product.name} has only ${product.stock} items left!`
+  });
+};
+
 const updateStatsForAdmins = async () => {
   try {
     const totalOrders = await Order.countDocuments();
@@ -164,13 +186,19 @@ const updateStatsForAdmins = async () => {
     
     const totalRevenue = totalRevenueResult[0]?.total || 0;
 
+    // Count low stock items
+    const lowStockCount = await Product.countDocuments({
+      stock: { $lt: LOW_STOCK_THRESHOLD, $gte: 0 }
+    });
+
     broadcastToAdmins({
       type: 'stats_update',
       data: {
         totalOrders,
         ordersToday,
         totalCustomers,
-        totalRevenue
+        totalRevenue,
+        lowStockCount
       }
     });
   } catch (error) {
@@ -180,6 +208,408 @@ const updateStatsForAdmins = async () => {
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
+
+// ========== INVENTORY ITEM ROUTES ==========
+
+// Get all inventory items
+app.get("/api/inventory", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const items = await InventoryItem.find().sort({ createdAt: -1 });
+    res.json({ success: true, data: items });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Get single inventory item
+app.get("/api/inventory/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const item = await InventoryItem.findById(req.params.id);
+    
+    if (!item) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Inventory item not found' 
+      });
+    }
+
+    res.json({ success: true, data: item });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Create new inventory item
+app.post("/api/inventory", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { 
+      itemName, 
+      itemType, 
+      category, 
+      message,
+      currentStock,
+      minStock,
+      unit,
+      isActive
+    } = req.body;
+
+    if (!itemName || !category) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Item name and category are required' 
+      });
+    }
+
+    const newItem = new InventoryItem({
+      itemName,
+      itemType: itemType || "raw",
+      category,
+      message: message || '',
+      currentStock: currentStock || 0,
+      minStock: minStock || 10,
+      unit: unit || 1,
+      isActive: isActive !== undefined ? isActive : true
+    });
+
+    await newItem.save();
+
+    res.status(201).json({ 
+      success: true, 
+      message: 'Inventory item added successfully',
+      data: newItem
+    });
+  } catch (error) {
+    console.error('Error creating inventory item:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
+// Update inventory item
+app.put("/api/inventory/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { 
+      itemName, 
+      itemType, 
+      category, 
+      message,
+      currentStock,
+      minStock,
+      unit,
+      isActive
+    } = req.body;
+
+    const updatedItem = await InventoryItem.findByIdAndUpdate(
+      req.params.id,
+      { 
+        itemName, 
+        itemType, 
+        category,
+        message,
+        currentStock,
+        minStock,
+        unit,
+        isActive,
+        updatedAt: Date.now()
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Inventory item not found' 
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Inventory item updated successfully',
+      data: updatedItem
+    });
+  } catch (error) {
+    console.error('Error updating inventory item:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        success: false, 
+        message: error.message 
+      });
+    }
+    
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
+// Delete inventory item
+app.delete("/api/inventory/:id", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const deletedItem = await InventoryItem.findByIdAndDelete(req.params.id);
+
+    if (!deletedItem) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Inventory item not found' 
+      });
+    }
+
+    res.json({ 
+      success: true, 
+      message: 'Inventory item deleted successfully' 
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
+// Search/filter inventory items
+app.get("/api/inventory/filter/search", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { itemType, category, search } = req.query;
+    let query = {};
+
+    if (itemType && itemType !== 'all') {
+      query.itemType = itemType;
+    }
+
+    if (category && category !== 'all') {
+      query.category = category;
+    }
+
+    if (search) {
+      query.itemName = { $regex: search, $options: 'i' };
+    }
+
+    const items = await InventoryItem.find(query).sort({ createdAt: -1 });
+    res.json({ success: true, data: items });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Get unique categories for filtering
+app.get("/api/inventory/categories", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const categories = await InventoryItem.distinct("category");
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Restock inventory item
+app.post("/api/inventory/:id/restock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { quantity, notes, price } = req.body;
+    const itemId = req.params.id;
+    
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid quantity greater than 0'
+      });
+    }
+    
+    const item = await InventoryItem.findById(itemId);
+    if (!item) {
+      return res.status(404).json({
+        success: false,
+        message: 'Item not found'
+      });
+    }
+    
+    // Update stock
+    item.currentStock += parseFloat(quantity);
+    
+    // Add to restock history
+    item.restockHistory.push({
+      quantity: parseFloat(quantity),
+      price: parseFloat(price || 0),
+      notes: notes || '',
+      addedBy: req.user.id
+    });
+    
+    await item.save();
+    
+    res.json({
+      success: true,
+      message: 'Item restocked successfully',
+      data: item
+    });
+  } catch (error) {
+    console.error('Restock error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// Get inventory statistics for dashboard - UPDATED VERSION
+app.get("/api/inventory/stats", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const totalItems = await InventoryItem.countDocuments();
+    
+    // Count low stock items (currentStock > 0 AND currentStock <= minStock)
+    const lowStockItems = await InventoryItem.find({
+      isActive: true
+    });
+    
+    let lowStockCount = 0;
+    let outOfStockCount = 0;
+    let needsRestockCount = 0;
+    
+    // Manually check each item because $expr with $ifNull in countDocuments can be tricky
+    for (const item of lowStockItems) {
+      const minStockValue = item.minStock || 10;
+      if (item.currentStock === 0) {
+        outOfStockCount++;
+        needsRestockCount++;
+      } else if (item.currentStock > 0 && item.currentStock <= minStockValue) {
+        lowStockCount++;
+        needsRestockCount++;
+      }
+    }
+    
+    // Get recent restocks
+    const recentRestocks = await InventoryItem.aggregate([
+      { $unwind: "$restockHistory" },
+      { $sort: { "restockHistory.date": -1 } },
+      { $limit: 5 },
+      { $project: {
+        itemName: 1,
+        quantity: "$restockHistory.quantity",
+        price: "$restockHistory.price",
+        notes: "$restockHistory.notes",
+        date: "$restockHistory.date"
+      }}
+    ]);
+    
+    res.json({
+      success: true,
+      data: {
+        totalItems,
+        lowStockCount,
+        outOfStockCount,
+        needsRestockCount,
+        recentRestocks
+      }
+    });
+  } catch (error) {
+    console.error('Inventory stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// Get items that need restocking
+app.get("/api/inventory/needs-restock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const items = await InventoryItem.find({
+      $or: [
+        { currentStock: 0 },
+        { 
+          $expr: { 
+            $lte: ["$currentStock", { $ifNull: ["$minStock", 10] }]
+          }
+        }
+      ],
+      isActive: true
+    }).sort({ currentStock: 1 });
+    
+    res.json({
+      success: true,
+      data: items
+    });
+  } catch (error) {
+    console.error('Error fetching items needing restock:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// ========== END INVENTORY ROUTES ==========
+
+// ========== LOW STOCK ROUTES ==========
+
+// Get low stock items
+app.get("/api/products/low-stock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const lowStockItems = await Product.find({
+      stock: { $lt: LOW_STOCK_THRESHOLD, $gte: 0 }
+    })
+    .populate('category', 'name')
+    .sort({ stock: 1 })
+    .lean();
+    
+    res.json({ 
+      success: true, 
+      data: lowStockItems,
+      count: lowStockItems.length,
+      threshold: LOW_STOCK_THRESHOLD
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// Get critical stock items (very low stock)
+app.get("/api/products/critical-stock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const criticalStockItems = await Product.find({
+      stock: { $lt: 5, $gte: 0 }
+    })
+    .populate('category', 'name')
+    .sort({ stock: 1 })
+    .lean();
+    
+    res.json({ 
+      success: true, 
+      data: criticalStockItems,
+      count: criticalStockItems.length
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      message: error.message 
+    });
+  }
+});
+
+// ========== END LOW STOCK ROUTES ==========
 
 const pages = ["login", "register", "order"];
 pages.forEach(page => {
@@ -372,13 +802,23 @@ app.post('/api/orders', async (req, res) => {
     
     sendOrderNotification(savedOrder);
     
+    // Update stock and check for low stock alerts
     try {
       for (const item of orderData.items) {
         if (item.id) {
           const product = await Product.findById(item.id);
           if (product && product.stock !== undefined) {
             const newStock = Math.max(0, product.stock - (item.quantity || 1));
-            await Product.findByIdAndUpdate(item.id, { stock: newStock });
+            const updatedProduct = await Product.findByIdAndUpdate(
+              item.id, 
+              { stock: newStock },
+              { new: true }
+            );
+            
+            // Check if stock is now low
+            if (updatedProduct && newStock < LOW_STOCK_THRESHOLD) {
+              sendLowStockAlert(updatedProduct);
+            }
           }
         }
       }
@@ -463,13 +903,25 @@ app.get('/api/stats', async (req, res) => {
       .limit(10)
       .lean();
     
+    // Get low stock count
+    const lowStockCount = await Product.countDocuments({
+      stock: { $lt: LOW_STOCK_THRESHOLD, $gte: 0 }
+    });
+    
+    // Get out of stock count
+    const outOfStockCount = await Product.countDocuments({
+      stock: 0
+    });
+    
     res.json({
       totalOrders,
       ordersToday,
       totalCustomers,
       totalRevenue,
       paymentStats: paymentStatsObj,
-      recentOrders
+      recentOrders,
+      lowStockCount,
+      outOfStockCount
     });
   } catch (error) {
     console.error('Stats fetch error:', error);
@@ -680,7 +1132,9 @@ app.get("/api/all-products", async (req, res) => {
       price: product.price,
       category: product.category ? product.category.name : 'Uncategorized',
       stock: product.stock || 0,
-      image: product.image || 'default_food.jpg'
+      image: product.image || 'default_food.jpg',
+      isLowStock: (product.stock || 0) < LOW_STOCK_THRESHOLD && (product.stock || 0) > 0,
+      isOutOfStock: (product.stock || 0) === 0
     }));
     
     res.json(formattedProducts);
@@ -746,13 +1200,27 @@ app.get("/admindashboard", verifyToken, verifyAdmin, async (req, res) => {
     
     const totalCustomers = (customerStats[0]?.total || 0) + ordersWithoutCustomerId;
 
+    // Get inventory stats
+    const totalInventoryItems = await InventoryItem.countDocuments();
+    const inventoryLowStock = await InventoryItem.countDocuments({
+      currentStock: { $gt: 0, $lte: { $ifNull: ["$minStock", 10] } },
+      isActive: true
+    });
+    const inventoryOutOfStock = await InventoryItem.countDocuments({
+      currentStock: 0,
+      isActive: true
+    });
+
     res.render("admindashboard", { 
       user: req.user, 
       stats: { 
         totalProducts, 
         totalStocks, 
         totalOrders, 
-        totalCustomers 
+        totalCustomers,
+        totalInventoryItems,
+        inventoryLowStock,
+        inventoryOutOfStock
       } 
     });
   } catch (err) {
@@ -762,7 +1230,10 @@ app.get("/admindashboard", verifyToken, verifyAdmin, async (req, res) => {
         totalProducts: 0, 
         totalStocks: 0, 
         totalOrders: 0, 
-        totalCustomers: 0 
+        totalCustomers: 0,
+        totalInventoryItems: 0,
+        inventoryLowStock: 0,
+        inventoryOutOfStock: 0
       } 
     });
   }
@@ -802,13 +1273,27 @@ app.get("/admindashboard/dashboard", verifyToken, verifyAdmin, async (req, res) 
       { $group: { _id: null, total: { $sum: "$total" } } }
     ]);
     const totalRevenue = totalRevenueResult[0]?.total || 0;
+    
+    // Get inventory stats
+    const totalInventoryItems = await InventoryItem.countDocuments();
+    const inventoryLowStock = await InventoryItem.countDocuments({
+      currentStock: { $gt: 0, $lte: { $ifNull: ["$minStock", 10] } },
+      isActive: true
+    });
+    const inventoryOutOfStock = await InventoryItem.countDocuments({
+      currentStock: 0,
+      isActive: true
+    });
 
     res.render("dashboard", { 
       stats: { 
         totalOrders, 
         totalProducts, 
         totalCustomers,
-        totalRevenue 
+        totalRevenue,
+        totalInventoryItems,
+        inventoryLowStock,
+        inventoryOutOfStock
       } 
     });
   } catch (err) {
@@ -817,14 +1302,44 @@ app.get("/admindashboard/dashboard", verifyToken, verifyAdmin, async (req, res) 
         totalOrders: 0, 
         totalProducts: 0, 
         totalCustomers: 0,
-        totalRevenue: 0 
+        totalRevenue: 0,
+        totalInventoryItems: 0,
+        inventoryLowStock: 0,
+        inventoryOutOfStock: 0
       } 
     });
   }
 });
 
-app.get("/admindashboard/inventory", verifyToken, verifyAdmin, (req, res) => {
-  res.render("Inventory");
+app.get("/admindashboard/inventory", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    // Get inventory stats for the inventory dashboard
+    const totalItems = await InventoryItem.countDocuments();
+    const lowStockCount = await InventoryItem.countDocuments({
+      currentStock: { $gt: 0, $lte: { $ifNull: ["$minStock", 10] } },
+      isActive: true
+    });
+    const outOfStockCount = await InventoryItem.countDocuments({
+      currentStock: 0,
+      isActive: true
+    });
+    
+    res.render("Inventory", {
+      stats: {
+        totalItems,
+        lowStockCount,
+        outOfStockCount
+      }
+    });
+  } catch (error) {
+    res.render("Inventory", {
+      stats: {
+        totalItems: 0,
+        lowStockCount: 0,
+        outOfStockCount: 0
+      }
+    });
+  }
 });
 
 app.get("/admindashboard/addstaff", verifyToken, verifyAdmin, (req, res) => {
@@ -861,6 +1376,39 @@ app.get("/admindashboard/menumanagement", verifyToken, verifyAdmin, async (req, 
   }
 });
 
+// Stock management dashboard
+app.get("/admindashboard/stock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const lowStockItems = await Product.find({
+      stock: { $lt: LOW_STOCK_THRESHOLD, $gte: 1 }
+    })
+    .populate('category', 'name')
+    .sort({ stock: 1 })
+    .lean();
+    
+    const outOfStockItems = await Product.find({
+      stock: 0
+    })
+    .populate('category', 'name')
+    .sort({ name: 1 })
+    .lean();
+    
+    res.render("stock", {
+      user: req.user,
+      lowStockItems,
+      outOfStockItems,
+      lowStockThreshold: LOW_STOCK_THRESHOLD
+    });
+  } catch (error) {
+    res.render("stock", {
+      user: req.user,
+      lowStockItems: [],
+      outOfStockItems: [],
+      lowStockThreshold: LOW_STOCK_THRESHOLD
+    });
+  }
+});
+
 app.get("/staffdashboard", verifyToken, async (req, res, next) => {
   try {
     if (req.user.role !== "staff") return res.redirect("/admindashboard");
@@ -871,9 +1419,16 @@ app.get("/staffdashboard", verifyToken, async (req, res, next) => {
       ...new Set(products.map(p => (p.category && p.category.name) ? p.category.name : "Uncategorized"))
     ];
 
+    // Mark low stock products
+    const productsWithStockStatus = products.map(product => ({
+      ...product,
+      isLowStock: (product.stock || 0) < LOW_STOCK_THRESHOLD && (product.stock || 0) > 0,
+      isOutOfStock: (product.stock || 0) === 0
+    }));
+
     res.render("staffdashboard", {
       user: req.user,
-      products,
+      products: productsWithStockStatus,
       categories
     });
   } catch (err) {
@@ -1062,6 +1617,90 @@ app.get("/api/orders", verifyToken, verifyAdmin, async (req, res) => {
   }
 });
 
+// Update product stock endpoint
+app.put("/api/products/:id/stock", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { stock } = req.body;
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { stock: parseInt(stock) },
+      { new: true }
+    ).populate('category', 'name');
+    
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+    
+    // Check if stock is low and send alert
+    if (product.stock < LOW_STOCK_THRESHOLD) {
+      sendLowStockAlert(product);
+    }
+    
+    res.json({ 
+      success: true, 
+      product,
+      isLowStock: product.stock < LOW_STOCK_THRESHOLD
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: error.message 
+    });
+  }
+});
+
+// Bulk update product stocks
+app.post("/api/products/bulk-stock-update", verifyToken, verifyAdmin, async (req, res) => {
+  try {
+    const { updates } = req.body;
+    
+    if (!updates || !Array.isArray(updates)) {
+      return res.status(400).json({ error: 'Updates array is required' });
+    }
+    
+    const results = [];
+    
+    for (const update of updates) {
+      if (update.productId && update.stock !== undefined) {
+        const product = await Product.findByIdAndUpdate(
+          update.productId,
+          { stock: parseInt(update.stock) },
+          { new: true }
+        );
+        
+        if (product) {
+          results.push({
+            productId: update.productId,
+            success: true,
+            stock: product.stock,
+            isLowStock: product.stock < LOW_STOCK_THRESHOLD
+          });
+          
+          // Check if stock is low and send alert
+          if (product.stock < LOW_STOCK_THRESHOLD) {
+            sendLowStockAlert(product);
+          }
+        } else {
+          results.push({
+            productId: update.productId,
+            success: false,
+            error: 'Product not found'
+          });
+        }
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      results,
+      message: `Updated ${results.filter(r => r.success).length} products`
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: error.message 
+    });
+  }
+});
+
 app.use((req, res) => {
   if (req.accepts('html')) {
     res.redirect('/login');
@@ -1086,6 +1725,7 @@ const PORT = process.env.PORT || 5050;
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
+  console.log(`Low stock threshold set to: ${LOW_STOCK_THRESHOLD}`);
 });
 
 server.on('error', (error) => {
