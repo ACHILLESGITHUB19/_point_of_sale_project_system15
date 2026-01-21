@@ -8,31 +8,71 @@ const MAX_RECONNECT_ATTEMPTS = 5;
 
 // Format number with commas
 function formatNumber(num) {
-    return new Intl.NumberFormat().format(num);
+    return new Intl.NumberFormat('en-US').format(num);
 }
 
-// Format currency (PHP)
+// Format currency (PHP) - FIXED VERSION
 function formatCurrency(amount) {
-    return new Intl.NumberFormat('en-PH', {
-        style: 'currency',
-        currency: 'PHP',
+    if (amount === undefined || amount === null) {
+        return '₱0.00';
+    }
+    
+    // Ensure amount is a number
+    const numAmount = parseFloat(amount);
+    if (isNaN(numAmount)) {
+        return '₱0.00';
+    }
+    
+    // Try using Intl.NumberFormat first
+    try {
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(numAmount);
+    } catch (error) {
+        // Fallback: manually format with ₱ sign
+        return '₱' + numAmount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+    }
+}
+
+// SIMPLER ALTERNATIVE - Use this function instead:
+function formatCurrencySimple(amount) {
+    if (amount === undefined || amount === null || isNaN(amount)) {
+        return '₱0.00';
+    }
+    
+    const numAmount = parseFloat(amount);
+    const formatted = numAmount.toLocaleString('en-US', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
-    }).format(amount);
+    });
+    
+    return '₱' + formatted;
 }
 
-// Update dashboard display
+// Update dashboard display - FIXED VERSION
 function updateDashboardDisplay(stats) {
+    console.log('Updating dashboard with stats:', stats);
+    
     // Update Total Orders
     const totalOrdersEl = document.getElementById('totalOrders');
     if (totalOrdersEl) {
         totalOrdersEl.textContent = formatNumber(stats.totalOrders || 0);
     }
     
-    // Update Total Revenue
+    // Update Total Revenue - USE FIXED FUNCTION
     const totalRevenueEl = document.getElementById('totalRevenue');
     if (totalRevenueEl) {
-        totalRevenueEl.textContent = formatCurrency(stats.totalRevenue || 0);
+        // Clear any existing content first
+        totalRevenueEl.textContent = '';
+        
+        // Use the simple formatter to ensure ₱ sign
+        const formattedRevenue = formatCurrencySimple(stats.totalRevenue || 0);
+        totalRevenueEl.textContent = formattedRevenue;
+        
+        console.log('Total revenue formatted:', formattedRevenue);
     }
     
     // Update Total Customers
@@ -331,7 +371,7 @@ function updateOrdersTable(order) {
     }
 }
 
-// Fetch dashboard stats from server
+// Fetch dashboard stats from server - ENHANCED VERSION
 async function fetchDashboardStats() {
     try {
         console.log('📊 Fetching dashboard stats...');
@@ -344,8 +384,12 @@ async function fetchDashboardStats() {
         const stats = await response.json();
         console.log('📊 Stats fetched:', stats);
         
-        // Update dashboard display
+        // Update dashboard display - USE ENHANCED FUNCTION
         updateDashboardDisplay(stats);
+        
+        // Debug: Log what's being displayed
+        console.log('Total Revenue value:', stats.totalRevenue);
+        console.log('Formatted Revenue:', formatCurrencySimple(stats.totalRevenue || 0));
         
         // Update orders table if on dashboard
         if (stats.recentOrders && stats.recentOrders.length > 0) {
@@ -354,6 +398,14 @@ async function fetchDashboardStats() {
         
     } catch (error) {
         console.error('❌ Error fetching dashboard stats:', error);
+        // Try to show something anyway
+        const fallbackStats = {
+            totalOrders: 0,
+            totalRevenue: 0,
+            totalCustomers: 0,
+            totalProducts: 0
+        };
+        updateDashboardDisplay(fallbackStats);
     }
 }
 
@@ -392,10 +444,20 @@ function cleanup() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('📄 Dashboard page loaded');
     
-    // Initialize real-time updates if on admin dashboard
-    if (window.location.pathname.includes('admindashboard') || 
-        window.location.pathname.includes('dashboard')) {
+    // Check if we're on dashboard page
+    const isDashboardPage = window.location.pathname.includes('admindashboard') || 
+                           window.location.pathname.includes('dashboard');
+    
+    console.log('Is dashboard page:', isDashboardPage, 'Path:', window.location.pathname);
+    
+    if (isDashboardPage) {
         console.log('🏁 Starting dashboard initialization...');
+        
+        // First, set a default value to ensure something shows
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        if (totalRevenueEl && totalRevenueEl.textContent.trim() === '') {
+            totalRevenueEl.textContent = '₱0.00';
+        }
         
         // Initial stats fetch
         fetchDashboardStats();
@@ -404,11 +466,34 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             initRealTimeUpdates();
         }, 1000);
+        
+        // Add emergency fallback to check every 2 seconds
+        setInterval(() => {
+            const revenueEl = document.getElementById('totalRevenue');
+            if (revenueEl && !revenueEl.textContent.includes('₱')) {
+                console.log('Emergency: Missing ₱ sign, fixing...');
+                const current = revenueEl.textContent;
+                revenueEl.textContent = '₱' + current.replace(/[^\d.]/g, '');
+            }
+        }, 2000);
     }
     
     // Cleanup on page unload
     window.addEventListener('beforeunload', cleanup);
 });
+
+// Add a global fix function that can be called from console
+window.fixPesoSign = function() {
+    const revenueEl = document.getElementById('totalRevenue');
+    if (revenueEl) {
+        const current = revenueEl.textContent;
+        if (!current.includes('₱')) {
+            const number = current.replace(/[^\d.]/g, '') || '0.00';
+            revenueEl.textContent = '₱' + number;
+            console.log('Fixed peso sign:', revenueEl.textContent);
+        }
+    }
+};
 
 // ==================== EXPORTS FOR TESTING ====================
 
